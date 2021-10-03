@@ -1,0 +1,60 @@
+- name: install nvidia drivers and docker drivers
+  hosts: "*"
+  tasks:
+    - name: "install nvidia driver 470"
+      apt:
+        name: nvidia-driver-470
+        state: present
+        update_cache: true
+      become: true
+
+    - name: "set distribution"
+      shell: 'distribution=$(. /etc/os-release;echo $ID$VERSION_ID)'
+      register: command_output01
+
+    - name: "add gpg key"
+      ansible.builtin.apt_key: 
+        url: https://nvidia.github.io/nvidia-docker/gpgkey
+        state: present
+      become: true
+
+    #- name: "add apt source"
+    #  apt_repository:
+    #    repo: https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list
+    #    state: present
+    #    filename: 'nvidia-docker.list'
+
+    - name: "update & upgrade os"
+      apt:
+        upgrade: yes
+        update_cache: true
+        force_apt_get: true
+      become: true
+
+    - name: "install nvidia-container-toolkit"
+      apt:
+        name: nvidia-container-toolkit
+        state: present
+        update_cache: true
+      become: true
+
+    - name: "install nvidia-container-runtime"
+      apt:
+        name: nvidia-container-runtime
+        state: present
+        update_cache: true
+      become: true
+
+    - name: "install nvidia-docker2"
+      apt:
+        name: nvidia-docker2
+        state: present
+        update_cache: true
+      become: true
+
+    - name: "usermod -aG docker $USER"
+      shell: 'usermod -aG docker $USER'
+      become: true
+
+    - debug:
+        var: command_output01.stdout_lines

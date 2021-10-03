@@ -1,0 +1,9 @@
+- name: update and upgrade the OS (apt-get update && apt-get upgrade)
+  hosts: "*"
+  tasks:
+    - name: "update & upgrade os"
+      apt:
+        upgrade: yes
+        update_cache: true
+        force_apt_get: true
+      become: true
