@@ -53,7 +53,7 @@
       become: true
 
     - name: "usermod -aG docker $USER"
-      shell: 'usermod -aG docker $USER'
+      shell: 'usermod -aG docker ubuntuserver'
       become: true
 
     - debug:

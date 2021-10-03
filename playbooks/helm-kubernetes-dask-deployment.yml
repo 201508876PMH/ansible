@@ -1,0 +1,17 @@
+- name: install helm and setup kubernetes cluster
+  hosts: "*"
+  tasks:
+    - name: "install helm"
+      uri:
+        url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        return_content: yes
+      become: yes 
+
+    - name: "helm repo add dask https://helm.dask.org/"
+      shell: 'helm repo add dask https://helm.dask.org/'
+
+    - name: "helm repo update"
+      shell: 'helm repo update'
+
+    - name: "helm install my-dask dask/dask"
+      shell: 'helm install my-dask dask/dask'      

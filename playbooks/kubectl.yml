@@ -1,0 +1,14 @@
+- name: install kubectl on Linux
+  hosts: "*"
+  tasks:
+    - name: "Install kubectl binary with curl"
+      shell: 'curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"'
+      become: yes
+
+    - name: "Validate the binary"
+      shell: 'curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"'
+      become: yes
+
+    - name: "Install kubectl"
+      shell: 'install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl'
+      become: true

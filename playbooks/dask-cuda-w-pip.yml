@@ -1,0 +1,12 @@
+- name: install Dask-CUDA
+  hosts: "*"
+  tasks:
+    - name: "install python pip"
+      apt:
+        name: python3-pip 
+        state: present
+        update_cache: true
+      become: true
+      
+    - name: "Install the latest version of Dask-CUDA"
+      shell: 'python3 -m pip install dask-cuda'
