@@ -1,0 +1,66 @@
+- name: install openCV, fix pkgconfig path and install cuda
+  hosts: "*"
+  tasks:
+    - name: "install python3-opencv"
+      apt:
+        name: python3-opencv
+        state: present
+        update_cache: true
+      become: true
+
+    - name: "create pkgconfig folder"
+      shell: 'sudo mkdir /usr/local/lib/pkgconfig'
+      become: true
+
+    - name: "create file named opencv.pc"
+      shell: 'touch /usr/local/lib/pkgconfig/opencv.pc'
+      become: true
+      
+   - name: "copy contents into opencv.pc file"
+     shell: 'echo "prefix=/usrn\n
+              exec_prefix=${prefix}\n
+              includedir=${prefix}/include\n
+              libdir=${exec_prefix}/lib\n
+
+              Name: opencv\n
+              Description: The opencv library\n
+              Version: 2.x.x\n
+              Cflags: -I${includedir}/opencv -I${includedir}/opencv2\n
+              Libs: -L${libdir} -lopencv_calib3d -lopencv_imgproc -lopencv_contrib -lopencv_legacy -lopencv_core -lopencv_ml -lopencv_features2d -lopencv_objdetect -lopencv_flann -lopencv_video -lopencv_highgui" >> /usr/local/lib/pkgconfig/opencv.pc'
+    become: true
+
+    - name: "add two lines to .bashrc"
+      shell: 'echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig\n
+              export PKG_CONFIG_PATH" >> ~/.bashrc'
+
+    - name: "wget packet contents for cuda"
+      shell: 'wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin'
+      
+    - name: "move folder"
+      shell: 'mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600'
+      become: true
+
+    - name: "wget packet contents for cuda"
+      shell: 'wget https://developer.download.nvidia.com/compute/cuda/11.4.2/local_installers/cuda-repo-ubuntu2004-11-4-local_11.4.2-470.57.02-1_amd64.deb'
+      
+    - name: "unpack deb file"
+      shell: 'dpkg -i cuda-repo-ubuntu2004-11-4-local_11.4.2-470.57.02-1_amd64.deb'
+      become: true
+
+    - name: "add apt key"
+      shell: 'apt-key add /var/cuda-repo-ubuntu2004-11-4-local/7fa2af80.pub'
+      become: true
+
+    - name: "update & upgrade os"
+      apt:
+        upgrade: yes
+        update_cache: true
+        force_apt_get: true
+      become: true
+
+    - name: "install cuda"
+      apt:
+        name: cuda
+        state: present
+        update_cache: true
+      become: true 
